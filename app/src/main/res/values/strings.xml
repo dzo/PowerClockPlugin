@@ -2,5 +2,8 @@
     <string name="enable">Enable Power Clock</string>
     <string name="app_name">Power Clock</string>
     <string name="installperm">You must install the Power Clock permission app before the clock can be enabled</string>
-    <string name="mustreinstall">After changing this setting you must reboot your phone for it to take effect.</string>
+    <string name="mustreinstall">"After changing the 'Enable' setting you must reboot your phone for it to take effect."</string>
+    <string name="big_size">Big Size</string>
+    <string name="size">Size</string>
+    <string name="select">Select</string>
 </resources>

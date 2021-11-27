@@ -59,6 +59,12 @@ public class PowerClock extends View {
     private int mStatus;
     private boolean mShowText=true;
 
+    public void setmBig(boolean mBig) {
+        this.mBig = mBig;
+    }
+
+    private boolean mBig=false;
+
     public PowerClock(Context context) {
         this(context, null);
     }
@@ -91,7 +97,10 @@ public class PowerClock extends View {
         if(!isInEditMode()) {
             Cursor c = mContext.getContentResolver().query(Uri.parse("content://dzclock"), null, null, null, null);
             c.moveToFirst();
-            mDialWidth = c.getInt(c.getColumnIndex(SettingsContentProvider.SIZE));
+            if(mBig)
+                mDialWidth = c.getInt(c.getColumnIndex(SettingsContentProvider.BIGSIZE));
+            else
+                mDialWidth = c.getInt(c.getColumnIndex(SettingsContentProvider.SIZE));
             mDialColour = c.getInt(c.getColumnIndex(SettingsContentProvider.DIALCOLOUR));
             mHandColour = c.getInt(c.getColumnIndex(SettingsContentProvider.HANDCOLOUR));
             mTextColour = c.getInt(c.getColumnIndex(SettingsContentProvider.TEXTCOLOUR));
@@ -99,7 +108,7 @@ public class PowerClock extends View {
             c.close();
         }
         Log.i(TAG,"onMeasure="+widthMeasureSpec+","+heightMeasureSpec);
-        if(mDialWidth<100) mDialWidth=400;
+     //   if(mDialWidth<100) mDialWidth=400;
     //    try {
     //        mDialWidth = mContext.createPackageContext("com.android.dzclock",0).getSharedPreferences("DzClock",Context.MODE_PRIVATE).getInt("SIZE",400);
     //    } catch (PackageManager.NameNotFoundException e) {
@@ -188,11 +197,14 @@ public class PowerClock extends View {
             String s;
             if (mStatus == BatteryManager.BATTERY_STATUS_CHARGING) {
                 if (mCurrent < 0)
-                    s = "Charging: " + String.format("%.2f", -mCurrent / 1000) + "A · " +
+                    s = String.format("%.2f", -mCurrent / 1000) + "A · " +
                             String.format("%.2f", -mCurrent * mVoltage / 1000) + "W · " +
                             mTemperature + "°C";
                 else s = "Charging";
-            } else s = (int) mCurrent + "mA · Av " + (int) mCurrentAv + "mA";
+            } else {
+                s = (int) mCurrent + "mA";
+            if(mCurrentAv>0) s+=" ·Av " + (int) mCurrentAv + " mA";
+            }
             canvas.drawText(s, x, y + w / 2 + mDialWidth * .075f, mTextPaint);
         }
 

@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.BatteryManager;
 import android.util.Log;
 import android.view.View;
@@ -16,11 +17,15 @@ import android.view.View;
 import com.android.systemui.plugins.ClockPlugin;
 import com.android.systemui.plugins.annotations.Requires;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.TimeZone;
 
 @Requires(target = ClockPlugin.class, version = ClockPlugin.VERSION)
 public class DzClock implements ClockPlugin {
     private PowerClock mClock;
+    private PowerClock mBigClock;
     private Context mContext;
     private Context mSysContext;
     private final String TAG="DzClock";
@@ -37,6 +42,8 @@ public class DzClock implements ClockPlugin {
         mSysContext=context;
         Log.i(TAG,"onCreate"+mContext.getApplicationInfo().toString());
         mClock=new PowerClock(mContext);
+        mBigClock=new PowerClock(mContext);
+        mBigClock.setmBig(true);
         mPcr =  new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -48,6 +55,9 @@ public class DzClock implements ClockPlugin {
                     mClock.setTemperature(temp/10.0f);
                     int status=intent.getIntExtra(BatteryManager.EXTRA_STATUS,0);
                     mClock.setStatus(status);
+                    mBigClock.setVoltage(voltage/1000.0f);
+                    mBigClock.setTemperature(temp/10.0f);
+                    mBigClock.setStatus(status);
                 }
                 mClock.onTimeChanged();
             }
@@ -62,6 +72,7 @@ public class DzClock implements ClockPlugin {
     @Override
     public void onDestroy() {
         mClock=null;
+        mBigClock=null;
         if(mPcr != null)
             mContext.unregisterReceiver(mPcr);
         mPcr=null;
@@ -95,11 +106,13 @@ public class DzClock implements ClockPlugin {
 
     @Override
     public View getBigClockView() {
-        return null;
+        //mClock=new PowerClock(mContext);
+        return mBigClock;
     }
 
     @Override
     public View getView() {
+      //  mClock=new PowerClock(mContext);
         return mClock;
     }
 
@@ -127,9 +140,11 @@ public class DzClock implements ClockPlugin {
 
     @Override
     public void setDarkAmount(float v) {
-        Log.i(TAG,"setDarkAmount:"+v);
+        //Log.i(TAG,"setDarkAmount:"+v);
         if(v==1.0f) {
             mClock.requestLayout();
+        //    mBigClock.requestLayout();
+       //     mContext.getContentResolver().query(Uri.parse("content://dzclock"),null, "doze", null, null);
         }
     }
 
@@ -137,6 +152,8 @@ public class DzClock implements ClockPlugin {
     public void onTimeZoneChanged(TimeZone timeZone) {
         if(mClock!=null)
             mClock.setTimezone(timeZone);
+        if(mBigClock!=null)
+            mBigClock.setTimezone(timeZone);
     }
 
     @Override
@@ -144,6 +161,8 @@ public class DzClock implements ClockPlugin {
         Log.i(TAG,"onTimeTick");
         if(mClock!=null)
             mClock.onTimeChanged();
+        if(mBigClock!=null)
+            mBigClock.onTimeChanged();
     }
 
 }

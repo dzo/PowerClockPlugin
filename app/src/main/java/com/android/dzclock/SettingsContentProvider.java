@@ -23,6 +23,7 @@ public class SettingsContentProvider extends ContentProvider {
     public static final String TEXTCOLOUR="TEXTCOLOUR";
     public static final String SHOWTEXT="SHOWTEXT";
     public static final String SIZE="SIZE";
+    public static final String BIGSIZE="BIGSIZE";
 
     public SettingsContentProvider() {
     }
@@ -55,33 +56,34 @@ public class SettingsContentProvider extends ContentProvider {
     @Override
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
-        /*
+/*
         if("doze".equals(selection)) {
-
-
             try {
-                FileOutputStream f = new FileOutputStream("/sys/class/drm/card0-DSI-1/doze_brightness");
-                f.write("1".getBytes());
+                FileOutputStream f = new FileOutputStream("/sys/devices/system/cpu/cpufreq/policy0/scaling_max_freq");
+                f.write("691200".getBytes());
                 f.close();
+       //         f = new FileOutputStream("/sys/class/drm/card0-DSI-1/doze_brightness");
+       //         f.write("1".getBytes());
+       //         f.close();
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
 
-
             return null;
         }
+*/
 
-         */
-        String[] columns = new String[] { "_id", SIZE, DIALCOLOUR,TEXTCOLOUR,HANDCOLOUR,SHOWTEXT};
+        String[] columns = new String[] { "_id", SIZE, DIALCOLOUR,TEXTCOLOUR,HANDCOLOUR,SHOWTEXT, BIGSIZE};
         int size=getContext().getSharedPreferences("DzClock", Context.MODE_PRIVATE).getInt(SIZE,400);
+        int bigsize=getContext().getSharedPreferences("DzClock", Context.MODE_PRIVATE).getInt(BIGSIZE,600);
         int dialcolour=getContext().getSharedPreferences("DzClock", Context.MODE_PRIVATE).getInt(DIALCOLOUR,-1);
         int textcolour=getContext().getSharedPreferences("DzClock", Context.MODE_PRIVATE).getInt(TEXTCOLOUR,-1);
         int handcolour=getContext().getSharedPreferences("DzClock", Context.MODE_PRIVATE).getInt(HANDCOLOUR,-1);
         int showtext=getContext().getSharedPreferences("DzClock", Context.MODE_PRIVATE).getInt(SHOWTEXT,1);
         MatrixCursor matrixCursor= new MatrixCursor(columns);
-        matrixCursor.addRow(new Object[] { 1, size , dialcolour, textcolour, handcolour,showtext});
+        matrixCursor.addRow(new Object[] { 1, size , dialcolour, textcolour, handcolour,showtext,bigsize});
         return matrixCursor;
 
         // TODO: Implement this to handle query requests from clients.

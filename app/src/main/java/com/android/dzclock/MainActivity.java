@@ -3,6 +3,8 @@ package com.android.dzclock;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
 
@@ -19,6 +21,9 @@ import java.io.InputStreamReader;
 public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences mPrefs;
+    private String TAG="MainActivity";
+    private String CLOCK_FACE_SETTING="lock_screen_custom_clock_face";
+
     String runcommand(String cmd) {
         try {
             Process process = Runtime.getRuntime().exec(cmd);//"/system/bin/dmesg");
@@ -28,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
             String line;
             while ((line = reader.readLine()) != null) sb.append(line);
             reader.close();
+            Log.i(TAG,"command:"+cmd+"->"+sb.toString());
             return sb.toString();
         } catch (IOException e) {
             return "Error";
@@ -71,13 +77,51 @@ public class MainActivity extends AppCompatActivity {
             mBinding.checkBox.setVisibility(View.GONE);
             mBinding.message.setText(R.string.installperm);
         }
+        String selected=Settings.Secure.getString(getContentResolver(),CLOCK_FACE_SETTING);//runcommand("settings get secure lock_screen_custom_clock_face");
+        Log.i(TAG,"selected"+selected);
+        mBinding.selectcheckBox.setChecked(selected.contains("com.android.dzclock.DzClock"));
+        mBinding.selectcheckBox.setOnCheckedChangeListener((v,isChecked) -> {
+            /*
+            if (isChecked)
+                runcommand("settings put secure lock_screen_custom_clock_face com.android.dzclock.DzClock");
+            else
+                runcommand("settings delete secure lock_screen_custom_clock_face");
+
+             */
+            if (isChecked)
+                Settings.Secure.putString(getContentResolver(),CLOCK_FACE_SETTING,"com.android.dzclock.DzClock");
+            else
+                Settings.Secure.putString(getContentResolver(),CLOCK_FACE_SETTING,null);
+        });
+        mBinding.powerClock2.setmBig(true);
+
         int prog=(mPrefs.getInt(SettingsContentProvider.SIZE,400)-100)/6;
+        int bigprog=(mPrefs.getInt(SettingsContentProvider.BIGSIZE,600)-100)/6;
+
         mBinding.seekBar.setProgress(prog);
+        mBinding.seekBarBig.setProgress(bigprog);
         mBinding.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 mPrefs.edit().putInt(SettingsContentProvider.SIZE,progress*6+100).apply();
                 mBinding.powerClock.requestLayout();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        mBinding.seekBarBig.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mPrefs.edit().putInt(SettingsContentProvider.BIGSIZE,progress*6+100).apply();
+                mBinding.powerClock2.requestLayout();
             }
 
             @Override

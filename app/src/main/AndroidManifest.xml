@@ -3,7 +3,9 @@
     package="com.android.dzclock"
     android:sharedUserId="android.uid.system">
 
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/>
     <uses-permission android:name="com.android.systemui.permission.PLUGIN" />
+
 
     <application
         android:allowBackup="true"
