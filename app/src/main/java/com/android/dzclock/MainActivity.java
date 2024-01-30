@@ -23,6 +23,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences mPrefs;
     private String TAG="MainActivity";
     private String CLOCK_FACE_SETTING="lock_screen_custom_clock_face";
+    private String CLOCK_ID_JSON="{\"clockId\":\"DzClock\"}";
 
     String runcommand(String cmd) {
         try {
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         mPrefs=getSharedPreferences("DzClock", Context.MODE_PRIVATE);
         mBinding=ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(mBinding.getRoot());
+
         String enabled=runcommand("cmd overlay list com.android.dzclockpermission");
         if(enabled.contains("dzclockpermission")) {
             mBinding.checkBox.setVisibility(View.VISIBLE);
@@ -77,9 +79,11 @@ public class MainActivity extends AppCompatActivity {
             mBinding.checkBox.setVisibility(View.GONE);
             mBinding.message.setText(R.string.installperm);
         }
+
+
         String selected=Settings.Secure.getString(getContentResolver(),CLOCK_FACE_SETTING);//runcommand("settings get secure lock_screen_custom_clock_face");
         Log.i(TAG,"selected"+selected);
-        mBinding.selectcheckBox.setChecked(selected.contains("com.android.dzclock.DzClock"));
+        mBinding.selectcheckBox.setChecked(selected.contains(CLOCK_ID_JSON));
         mBinding.selectcheckBox.setOnCheckedChangeListener((v,isChecked) -> {
             /*
             if (isChecked)
@@ -89,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
 
              */
             if (isChecked)
-                Settings.Secure.putString(getContentResolver(),CLOCK_FACE_SETTING,"com.android.dzclock.DzClock");
+                Settings.Secure.putString(getContentResolver(),CLOCK_FACE_SETTING,CLOCK_ID_JSON);
             else
                 Settings.Secure.putString(getContentResolver(),CLOCK_FACE_SETTING,null);
         });
@@ -141,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
         mBinding.showText.setOnCheckedChangeListener((v, isChecked)-> {
             mPrefs.edit().putInt(SettingsContentProvider.SHOWTEXT,isChecked?1:0).apply();
             mBinding.powerClock.requestLayout();
+            mBinding.powerClock2.requestLayout();
         });
     }
 }

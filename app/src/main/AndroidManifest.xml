@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.android.dzclock"
     android:sharedUserId="android.uid.system">
 
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"/>
@@ -30,9 +29,9 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".DzClock">
+        <service android:name=".DzClockProviderPlugin">
             <intent-filter>
-                <action android:name="com.android.systemui.action.PLUGIN_CLOCK" />
+                <action android:name="com.android.systemui.action.PLUGIN_CLOCK_PROVIDER" />
             </intent-filter>
         </service>
     </application>

@@ -199,7 +199,7 @@ public class PowerClock extends View {
                 if (mCurrent < 0)
                     s = String.format("%.2f", -mCurrent / 1000) + "A · " +
                             String.format("%.2f", -mCurrent * mVoltage / 1000) + "W · " +
-                            mTemperature + "°C";
+                            mTemperature + "°";
                 else s = "Charging";
             } else {
                 s = (int) mCurrent + "mA";
