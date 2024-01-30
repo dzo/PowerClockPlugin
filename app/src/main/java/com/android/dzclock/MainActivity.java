@@ -85,17 +85,18 @@ public class MainActivity extends AppCompatActivity {
         Log.i(TAG,"selected"+selected);
         mBinding.selectcheckBox.setChecked(selected.contains(CLOCK_ID_JSON));
         mBinding.selectcheckBox.setOnCheckedChangeListener((v,isChecked) -> {
-            /*
-            if (isChecked)
-                runcommand("settings put secure lock_screen_custom_clock_face com.android.dzclock.DzClock");
-            else
-                runcommand("settings delete secure lock_screen_custom_clock_face");
-
-             */
             if (isChecked)
                 Settings.Secure.putString(getContentResolver(),CLOCK_FACE_SETTING,CLOCK_ID_JSON);
             else
                 Settings.Secure.putString(getContentResolver(),CLOCK_FACE_SETTING,null);
+        });
+        String flag=runcommand("cmd statusbar flag lockscreen_custom_clocks");
+        mBinding.flagcheckBox.setChecked(flag.contains("true"));
+        mBinding.flagcheckBox.setOnCheckedChangeListener((v,isChecked) -> {
+            if (isChecked)
+                runcommand("cmd statusbar flag lockscreen_custom_clocks on");
+            else
+                runcommand("cmd statusbar flag lockscreen_custom_clocks off");
         });
         mBinding.powerClock2.setmBig(true);
 

@@ -29,7 +29,8 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".DzClockProviderPlugin">
+        <service android:name=".DzClockProviderPlugin"
+            android:exported="true">
             <intent-filter>
                 <action android:name="com.android.systemui.action.PLUGIN_CLOCK_PROVIDER" />
             </intent-filter>

@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.BatteryManager;
@@ -31,8 +32,6 @@ public class DzClockProviderPlugin implements ClockProviderPlugin {
     public void onCreate(Context context, Context mycontext) {
         mContext=mycontext;
         mSysContext=context;
-        Log.i(TAG,"onCreate"+mContext.getApplicationInfo().toString());
-
     }
 
     @NonNull
@@ -60,6 +59,7 @@ public class DzClockProviderPlugin implements ClockProviderPlugin {
     @Override
     public List<ClockMetadata> getClocks() {
         Log.i(TAG,"getClocks");
-        return new ArrayList<>(Arrays.asList(new ClockMetadata("DzClock","Power Clock")));
+        return new ArrayList<>(Arrays.asList(new ClockMetadata("DzClock","Power Clock"),
+                new ClockMetadata("DEFAULT","Default Clock")));
     }
 }
